@@ -1,0 +1,16 @@
+[project]
+name = "git-credential-relay"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = ["psutil"]
+
+[dependency-groups]
+dev = ["ruff"]
+
+[tool.ruff]
+line-length = 80
+
+[tool.ruff.format]
+quote-style = "single"
