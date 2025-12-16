@@ -9,6 +9,8 @@ The socket can be forwarded over SSH, allowing `git` commands on the remote host
 > Forwarded UNIX domain sockets are advantageous in that they are by default only accessible by the login user and root (per the SSH `StreamLocalBindMask` option), unlike a TCP socket which could be accessed by any user on the remote server.
 >
 > Unfortunately SSH's support for forwarded UNIX domain sockets is hampered by its inability to reuse the same socket file on the remote side ([bug 2601](https://bugzilla.mindrot.org/show_bug.cgi?id=2601)). You must `unlink /tmp/git-credential-relay.sock` between uses.
+>
+> It is also recommended to use a unique socket path on the remote server to avoid collisions between users, such as `$HOME/.git-credential-relay.sock`. SSH requires an absolute path for the `-R` option.
 
 
 For example:
