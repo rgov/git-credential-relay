@@ -84,16 +84,6 @@ def git_credential_fill(req: dict[str, str]) -> dict[str, str]:
     return resp
 
 
-def git_credential_approve(req: dict[str, str]) -> None:
-    subprocess.run(
-        ['git', 'credential', 'approve'],
-        input=('\n'.join(f'{k}={v}' for k, v in req.items()) + '\n\n').encode(),
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-        check=False,
-    )
-
-
 def confirm_get(req: dict[str, str], peer: str) -> bool:
     proto = req.get('protocol', '?')
     host = req.get('host', '?')
@@ -137,28 +127,14 @@ def main() -> None:
             try:
                 peer = get_peer_info(conn)
                 req = read_kv(f)
-                op = req.pop('op', 'get')
 
-                if op == 'erase':
-                    write_close_kv(f, {'error': 'erase disabled'})
+                if not confirm_get(req, peer):
                     continue
 
-                if op == 'get':
-                    if not confirm_get(req, peer):
-                        write_close_kv(f, {'error': 'user denied'})
-                        continue
-                    write_close_kv(f, git_credential_fill(req))
-                    continue
-
-                if op == 'store':
-                    git_credential_approve(req)
-                    write_close_kv(f, {})
-                    continue
-
-                write_close_kv(f, {'error': f'unknown op: {op}'})
+                write_close_kv(f, git_credential_fill(req))
             except Exception:
                 traceback.print_exc()
-                write_close_kv(f, {'error': 'internal server error'})
+                continue
 
 
 if __name__ == '__main__':

@@ -19,10 +19,10 @@ For example:
     ssh -R /tmp/git-credential-relay.sock:$HOME/.cache/git-credential-relay/local.sock \
         user@server
 
-On the remote server, configure Git to pass credential requests over the socket. This requires the `socat` command.
+On the remote server, configure Git to pass credential requests over the socket. This requires the `socat` command. (The final `#` ignores the `get` operation appended by Git.)
 
     git config --global credential.helper \
-    '!f(){ op=${1:-get}; { printf "op=%s\n" "$op"; cat; } | socat -t 60 - UNIX-CONNECT:/tmp/git-credential-relay.sock; }; f'
+    '!socat -t 60 - UNIX-CONNECT:/tmp/git-credential-relay.sock #'
 
 You can test this out by sending a request for GitHub's credential:
 
@@ -32,4 +32,4 @@ You can test this out by sending a request for GitHub's credential:
 
     EOF
 
-The relay server asks for permission locally before returning credentials. For security, the remote is not allowed to erase credentials.
+The relay server asks for permission locally before returning credentials. The remote is not allowed to store or erase credentials.
