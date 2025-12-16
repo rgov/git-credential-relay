@@ -17,7 +17,7 @@ For example:
     ssh -R '/tmp/git-credential-relay.sock:$HOME/.cache/git-credential-relay/local.sock' \
         user@server
 
-On the remote server, configure Git to pass credential requests over the socket:
+On the remote server, configure Git to pass credential requests over the socket. This requires the `socat` command.
 
     git config --global credential.helper \
     '!f(){ op=${1:-get}; { printf "op=%s\n" "$op"; cat; } | socat -t 60 - UNIX-CONNECT:/tmp/git-credential-relay.sock; }; f'
