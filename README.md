@@ -16,7 +16,7 @@ The socket can be forwarded over SSH, allowing `git` commands on the remote host
 For example:
 
     uv run main.py
-    ssh -R '/tmp/git-credential-relay.sock:$HOME/.cache/git-credential-relay/local.sock' \
+    ssh -R /tmp/git-credential-relay.sock:$HOME/.cache/git-credential-relay/local.sock \
         user@server
 
 On the remote server, configure Git to pass credential requests over the socket. This requires the `socat` command.
